@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GymPro | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.4.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+
+:root {
+    --primary-color: #ff0000;
+    --primary-variant: #b30000;
+    --bg-color: #0c0c0c;
+    --card-bg: rgba(25, 25, 25, 0.8);
+    --text-color: #ffffff;
+    --text-muted: #a0a0a0;
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --accent-glow: rgba(255, 0, 0, 0.3);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background:
+        radial-gradient(circle at 10% 20%, rgba(255, 0, 0, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 0, 0, 0.05) 0%, transparent 40%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ── Navigation ── */
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 5%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.nav__logo img {
+    height: 90px;
+}
+
+.nav__links {
+    display: flex;
+    list-style: none;
+    gap: 2rem;
+}
+
+.nav__links a {
+    text-decoration: none;
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.2s;
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+}
+
+.nav__links a:hover {
+    color: var(--primary-color);
+}
+
+/* ── Buttons ── */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.75rem 1.4rem;
+    border: none;
+    border-radius: 6px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    box-shadow: 0 4px 15px var(--accent-glow);
+    text-decoration: none;
+}
+
+.btn:hover {
+    background-color: var(--primary-variant);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px var(--accent-glow);
+}
+
+/* ── Layout ── */
+.container {
+    padding: 2rem 5%;
+}
+
+h1,
+h2,
+h3 {
+    margin-bottom: 1.2rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.section__header {
+    font-size: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+/* ── Cards ── */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(5px);
+    padding: 2rem;
+    border-radius: 15px;
+    transition: border-color 0.2s;
+}
+
+/* NOTE: NO transform on hover — that breaks click targets inside cards */
+.card:hover {
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+/* ── Dashboard / Stats ── */
+.dashboard__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.stat-number {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.stat-icon {
+    font-size: 1.8rem;
+    margin-bottom: 0.4rem;
+}
+
+.stat-label {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+
+/* ── Quick actions ── */
+.quick-action {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.1rem;
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: white;
+    transition: border-color 0.2s, background 0.2s;
+    margin-bottom: 0.6rem;
+}
+
+.quick-action:hover {
+    border-color: var(--primary-color);
+    background: rgba(255, 0, 0, 0.04);
+}
+
+.quick-action-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+/* ── Forms ── */
+.form-group {
+    margin-bottom: 1.4rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--glass-border);
+    color: white;
+    border-radius: 6px;
+    outline: none;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--primary-color);
+}
+
+select option {
+    background: #1a1a1a;
+}
+
+/* ── Tables ── */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 0.9rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+th {
+    color: var(--primary-color);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+}
+
+tbody tr:hover {
+    background: rgba(255, 255, 255, 0.02);
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* ── Client list page ── */
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.search-bar input {
+    flex: 1;
+    max-width: 420px;
+}
+
+.avatar-sm {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--glass-border);
+    display: block;
+}
+
+.avatar-sm-placeholder {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.1);
+    border: 2px solid rgba(255, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--primary-color);
+}
+
+.nfc-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: rgba(255, 0, 0, 0.08);
+    border: 1px solid rgba(255, 0, 0, 0.2);
+    padding: 0.2rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.72rem;
+    font-family: monospace;
+    letter-spacing: 0.5px;
+}
+
+.pill {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.pill-active {
+    background: rgba(0, 230, 118, 0.12);
+    color: #00e676;
+}
+
+.pill-expired {
+    background: rgba(255, 23, 68, 0.12);
+    color: #ff1744;
+}
+
+.action-link {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+    transition: color 0.2s;
+    margin-right: 0.6rem;
+    text-decoration: none;
+}
+
+.action-link:hover {
+    color: white;
+}
+
+/* ── Products modal ── */
+.modal-bg {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.82);
+    z-index: 500;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-bg.open {
+    display: flex;
+}
+
+.modal {
+    background: #141414;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 2rem;
+    width: 100%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal h3 {
+    margin-bottom: 1.5rem;
+    font-size: 1rem;
+    letter-spacing: 2px;
+}
+
+/* ── Client form ── */
+.nfc-input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.nfc-status {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.4rem;
+}
+
+.nfc-status.scanning {
+    color: #f39c12;
+}
+
+.nfc-status.captured {
+    color: #00e676;
+}
+
+.preview-wrap {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.preview-img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+}
+
+.preview-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.08);
+    border: 3px dashed rgba(255, 0, 0, 0.3);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 2.5rem;
+}
+
+/* ── Subscription form ── */
+.type-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.type-card {
+    border: 2px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+    text-align: center;
+}
+
+.type-card:hover {
+    border-color: rgba(255, 0, 0, 0.4);
+}
+
+.type-card.selected {
+    border-color: var(--primary-color);
+    background: rgba(255, 0, 0, 0.05);
+}
+
+.type-icon {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.price-preview {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 1rem 0;
+}
+
+/* ── POS ── */
+.pos-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 2rem;
+}
+
+.product-tile {
+    background: var(--card-bg);
+    border: 1.5px solid var(--glass-border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    cursor: pointer;
+    text-align: center;
+    transition: border-color 0.2s, transform 0.15s;
+}
+
+.product-tile:hover {
+    border-color: rgba(255, 0, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.product-tile.selected {
+    border-color: var(--primary-color);
+    background: rgba(255, 0, 0, 0.06);
+}
+
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.checkout-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 1.75rem;
+    position: sticky;
+    top: 6rem;
+}
+
+.total-box {
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+    margin: 1.5rem 0;
+}
+
+/* ── Low stock indicators ── */
+.low-stock {
+    color: #ff1744;
+    font-weight: 700;
+}
+
+.stock-ok {
+    color: #00e676;
+}
+
+/* ── NFC scan page ── */
+.scan-wrapper {
+    min-height: calc(100vh - 80px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.scan-ring {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%;
+    border: 3px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    margin-bottom: 2rem;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+@keyframes pulse-ring {
+    0% {
+        transform: scale(0.95);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1.15);
+        opacity: 0;
+    }
+}
+
+.scan-ring::before {
+    content: '';
+    position: absolute;
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 0, 0, 0.25);
+    animation: pulse-ring 2s ease-out infinite;
+}
+
+.scan-ring::after {
+    content: '';
+    position: absolute;
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 0, 0, 0.1);
+    animation: pulse-ring 2s ease-out infinite 0.6s;
+}
+
+.scan-ring.active {
+    border-color: #00e676;
+    box-shadow: 0 0 40px rgba(0, 230, 118, 0.25);
+}
+
+.scan-ring.active::before,
+.scan-ring.active::after {
+    display: none;
+}
+
+.scan-ring.error {
+    border-color: #ff1744;
+}
+
+.scan-ring.error::before,
+.scan-ring.error::after {
+    display: none;
+}
+
+.scan-icon {
+    font-size: 5rem;
+    color: var(--primary-color);
+    transition: color 0.3s;
+}
+
+.scan-ring.active .scan-icon {
+    color: #00e676;
+}
+
+.scan-ring.error .scan-icon {
+    color: #ff1744;
+}
+
+.scan-input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+    width: 1px;
+    height: 1px;
+}
+
+.manual-input {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
+    width: 100%;
+    max-width: 420px;
+}
+
+.manual-input input {
+    flex: 1;
+    text-align: center;
+    letter-spacing: 2px;
+    font-size: 1.1rem;
+}
+
+.scan-hint {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    letter-spacing: 1px;
+}
+
+/* NFC result overlay */
+.result-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.result-overlay.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.result-card {
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    transform: translateY(20px);
+    transition: transform 0.3s;
+}
+
+.result-overlay.show .result-card {
+    transform: translateY(0);
+}
+
+.result-avatar {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    margin-bottom: 1.5rem;
+}
+
+.result-avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.1);
+    border: 3px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 3rem;
+    color: var(--primary-color);
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 1.5px;
+    margin: 1rem 0;
+}
+
+.status-active {
+    background: rgba(0, 230, 118, 0.15);
+    color: #00e676;
+    border: 1px solid rgba(0, 230, 118, 0.4);
+}
+
+.status-expired {
+    background: rgba(255, 23, 68, 0.15);
+    color: #ff1744;
+    border: 1px solid rgba(255, 23, 68, 0.4);
+}
+
+.status-session {
+    background: rgba(33, 150, 243, 0.15);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.4);
+}
+
+.close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--glass-border);
+    font-size: 0.9rem;
+}
+
+.info-row:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: var(--text-muted);
+}
+
+/* ── Profile / detail page ── */
+.profile-header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 2.5rem;
+    background: var(--card-bg);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    position: relative;
+}
+
+.profile-avatar {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--primary-color);
+    flex-shrink: 0;
+}
+
+.avatar-placeholder {
+    width: 110px;
+    height: 110px;
+    border-radius: 50%;
+    background: rgba(255, 0, 0, 0.1);
+    border: 3px solid var(--primary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3.5rem;
+    color: var(--primary-color);
+    flex-shrink: 0;
+}
+
+.status-pill {
+    display: inline-block;
+    padding: 0.3rem 1rem;
+    border-radius: 50px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    margin-top: 0.5rem;
+}
+
+.pill-active {
+    background: rgba(0, 230, 118, 0.15);
+    color: #00e676;
+    border: 1px solid rgba(0, 230, 118, 0.4);
+}
+
+.pill-expired {
+    background: rgba(255, 23, 68, 0.15);
+    color: #ff1744;
+    border: 1px solid rgba(255, 23, 68, 0.4);
+}
+
+.pill-session {
+    background: rgba(33, 150, 243, 0.15);
+    color: #2196f3;
+    border: 1px solid rgba(33, 150, 243, 0.4);
+}
+
+.profile-actions {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-sm {
+    padding: 0.45rem 0.9rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.72rem;
+    letter-spacing: 0.5px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    transition: opacity 0.2s;
+}
+
+.btn-sm:hover {
+    opacity: 0.85;
+}
+
+.sub-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--glass-border);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+}
+
+.sub-card:hover {
+    border-color: rgba(255, 0, 0, 0.3);
+}
+
+.sub-card.active-sub {
+    border-color: #00e676;
+    background: rgba(0, 230, 118, 0.04);
+}
+
+.nfc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid rgba(255, 0, 0, 0.3);
+    padding: 0.3rem 0.8rem;
+    border-radius: 5px;
+    font-size: 0.8rem;
+    font-family: monospace;
+    letter-spacing: 1px;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4rem 2rem;
+}
+
+.info-item {
+    padding: 0.4rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.info-label-sm {
+    font-size: 0.72rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-value {
+    font-size: 0.95rem;
+    margin-top: 0.15rem;
+}
+
+/* ── Footer ── */
+footer {
+    padding: 3rem 5% 2rem;
+    background: #050505;
+    margin-top: 5rem;
+}
+
+.footer__bar {
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 1px solid var(--glass-border);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+/* ── Success toast (POS) ── */
+.success-toast {
+    position: fixed;
+    top: 5.5rem;
+    right: 2rem;
+    background: #00e676;
+    color: #000;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.85rem;
+    z-index: 999;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="nav__logo">
+            <a href="/"><img src="assets/img/for project2.png" th:src="@{/for project2.png}" alt="GymPro Logo"></a>
+        </div>
+        <ul class="nav__links">
+            <li><a href="/" style="color:var(--primary-color);">Dashboard</a></li>
+            <li><a href="/clients">Clients</a></li>
+            <li><a href="/products">Products</a></li>
+            <li><a href="/sales">Sales & POS</a></li>
+            <li><a href="/nfc">NFC Scan</a></li>
+        </ul>
+        <div class="nav__action">
+            <button class="btn" onclick="location.href='/nfc'">
+                <i class="ri-nfc-fill"></i> Scan NFC
+            </button>
+        </div>
+    </nav>
+
+    <!-- Stats -->
+    <div class="container">
+        <div class="dashboard__grid"
+            style="grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); margin-top:2rem;">
+            <div class="card stat-card">
+                <i class="ri-user-heart-fill stat-icon" style="color:var(--primary-color);"></i>
+                <div class="stat-number" th:text="${totalClients}">0</div>
+                <div class="stat-label">Total Members</div>
+            </div>
+            <div class="card stat-card">
+                <i class="ri-shield-check-fill stat-icon" style="color:#00e676;"></i>
+                <div class="stat-number" style="color:#00e676;" th:text="${activeSubscriptions}">0</div>
+                <div class="stat-label">Active Subscriptions</div>
+            </div>
+            <div class="card stat-card">
+                <i class="ri-error-warning-fill stat-icon" style="color:#ff1744;"></i>
+                <div class="stat-number" style="color:#ff1744;" th:text="${expiredSubscriptions}">0</div>
+                <div class="stat-label">Expired / No Sub</div>
+            </div>
+            <div class="card stat-card">
+                <i class="ri-money-dollar-circle-fill stat-icon" style="color:#f39c12;"></i>
+                <div class="stat-number" style="color:#f39c12;">
+                    <span th:text="${#numbers.formatDecimal(totalProfit, 0, 'COMMA', 0, 'POINT')}">0</span>
+                </div>
+                <div class="stat-label">Total Revenue (DZD)</div>
+            </div>
+            <div class="card stat-card">
+                <i class="ri-shopping-bag-3-fill stat-icon" style="color:#3498db;"></i>
+                <div class="stat-number" style="color:#3498db;" th:text="${totalProducts}">0</div>
+                <div class="stat-label">Products in Stock</div>
+            </div>
+        </div>
+
+        <!-- Main content row -->
+        <div style="display:grid; grid-template-columns:1fr 320px; gap:2rem; margin-top:2rem;">
+
+            <!-- Hero section -->
+            <div style="display:flex; flex-direction:column; gap:2rem;">
+                <div class="card" style="display:flex; align-items:center; gap:3rem;">
+                    <div style="flex:1;">
+                        <h2 style="font-size:1.8rem; margin-bottom:0.75rem; line-height:1.3;">
+                            Manage Your Gym<br>
+                            <span style="color:var(--primary-color);">Professionally</span>
+                        </h2>
+                        <p style="color:var(--text-muted); line-height:1.7; margin-bottom:1.5rem;">
+                            Track subscriptions, manage products, monitor revenue — all in one place. Use NFC tags for
+                            instant member check-in.
+                        </p>
+                        <div style="display:flex; gap:1rem;">
+                            <button class="btn" onclick="location.href='/nfc'">
+                                <i class="ri-nfc-fill"></i> Scan Member
+                            </button>
+                            <button class="btn" onclick="location.href='/clients/new'"
+                                style="background:transparent; border:1px solid var(--glass-border);">
+                                <i class="ri-user-add-line"></i> New Client
+                            </button>
+                        </div>
+                    </div>
+                    <img src="assets/img/for project2.png" th:src="@{/project.png}" alt="Gym"
+                        style="width:500px; border-radius:16px; flex-shrink:0;">
+                </div>
+            </div>
+
+            <!-- Quick actions -->
+            <div>
+                <h3 style="font-size:0.8rem; letter-spacing:2px; color:var(--text-muted); margin-bottom:1rem;">QUICK
+                    ACTIONS</h3>
+
+                <a href="/nfc" class="quick-action">
+                    <div class="quick-action-icon" style="background:rgba(255,0,0,0.1); color:var(--primary-color);">
+                        <i class="ri-nfc-fill"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">NFC Scan</div>
+                        <div style="color:var(--text-muted); font-size:0.78rem;">Check in a member</div>
+                    </div>
+                </a>
+
+                <a href="/clients/new" class="quick-action">
+                    <div class="quick-action-icon" style="background:rgba(0,150,255,0.1); color:#3498db;">
+                        <i class="ri-user-add-line"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">Register Client</div>
+                        <div style="color:var(--text-muted); font-size:0.78rem;">Add new member</div>
+                    </div>
+                </a>
+
+                <a href="/sales" class="quick-action">
+                    <div class="quick-action-icon" style="background:rgba(0,230,118,0.1); color:#00e676;">
+                        <i class="ri-shopping-cart-line"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">Point of Sale</div>
+                        <div style="color:var(--text-muted); font-size:0.78rem;">Sell products</div>
+                    </div>
+                </a>
+
+                <a href="/clients" class="quick-action">
+                    <div class="quick-action-icon" style="background:rgba(243,156,18,0.1); color:#f39c12;">
+                        <i class="ri-group-line"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">All Members</div>
+                        <div style="color:var(--text-muted); font-size:0.78rem;">View & manage</div>
+                    </div>
+                </a>
+
+                <a href="/products" class="quick-action">
+                    <div class="quick-action-icon" style="background:rgba(155,89,182,0.1); color:#9b59b6;">
+                        <i class="ri-flask-line"></i>
+                    </div>
+                    <div>
+                        <div style="font-weight:600; font-size:0.9rem;">Inventory</div>
+                        <div style="color:var(--text-muted); font-size:0.78rem;">Products & stock</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer style="margin-top:5rem;">
+        <div class="footer__bar">&copy; 2025 GymPro Management System</div>
+    </footer>
+</body>
+
+</html>
