@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gym manager</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --red: #e01c2e;
+      --red-dim: #9b1520;
+      --bg: #0e0e0e;
+      --bg2: #161616;
+      --bg3: #1e1e1e;
+      --border: #2a2a2a;
+      --text: #f0f0f0;
+      --muted: #888;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 8vw 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 80% 50%, rgba(224, 28, 46, 0.10) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(72px, 12vw, 160px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .hero-title span {
+      color: var(--red);
+    }
+
+    .hero-desc {
+      margin-top: 32px;
+      max-width: 520px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+      font-weight: 300;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 36px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.55s;
+    }
+
+    .tag {
+      border: 1px solid var(--border);
+      padding: 6px 16px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .tag.red {
+      border-color: var(--red-dim);
+      color: var(--red);
+      background: rgba(224, 28, 46, 0.07);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 8vw;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.9s;
+    }
+
+    .scroll-hint::before {
+      content: '';
+      width: 40px;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── SECTION ── */
+    .section {
+      padding: 100px 8vw;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 48px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      max-width: 60px;
+      height: 1px;
+      background: var(--red-dim);
+    }
+
+    /* ── SCREENS GRID ── */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .screen-card {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      cursor: pointer;
+      transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .screen-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--red-dim);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(224, 28, 46, 0.15);
+    }
+
+    .screen-card.featured {
+      grid-column: 1 / -1;
+    }
+
+    .screen-card img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .screen-card:hover img {
+      transform: scale(1.015);
+    }
+
+    .screen-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 28px 20px 16px;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+      font-size: 12px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+    }
+
+    /* ── FEATURE LIST ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      background: var(--border);
+    }
+
+    .feature {
+      background: var(--bg2);
+      padding: 32px 28px;
+      transition: background 0.25s;
+    }
+
+    .feature:hover {
+      background: var(--bg3);
+    }
+
+    .feature-icon {
+      font-size: 22px;
+      margin-bottom: 16px;
+    }
+
+    .feature-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0 8vw;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 60px 8vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: gap;
+    }
+
+    .footer-brand {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 28px;
+      letter-spacing: 0.1em;
+    }
+
+    .footer-brand span {
+      color: var(--red);
+    }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.92);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 24px;
+      backdrop-filter: blur(8px);
+    }
+
+    .lightbox.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .lightbox img {
+      max-width: 90vw;
+      max-height: 88vh;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.8);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox.open img {
+      transform: scale(1);
+    }
+
+    .lightbox-close {
+      position: fixed;
+      top: 28px;
+      right: 36px;
+      font-size: 28px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover {
+      color: var(--red);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    @media (max-width: 640px) {
+      .screens-grid {
+        grid-template-columns: 1fr;
+      }
+
+      footer {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <p class="hero-eyebrow">ALL RIGHTS RESERVED TO ISSAM</p>
+    <h1 class="hero-title">GYM<br><span>MANAGEMENT</span></h1>
+    <p class="hero-desc">
+      A full-featured gym management system built for daily operations — NFC member check-ins, supplement inventory
+      tracking, POS sales, and multi-user analytics, all in a sleek dark interface.
+    </p>
+    <div class="hero-tags">
+      <span class="tag red">NFC Integration</span>
+      <span class="tag">Member Management</span>
+      <span class="tag">POS & Sales</span>
+      <span class="tag">Analytics</span>
+      <span class="tag">Inventory</span>
+    </div>
+    <p class="scroll-hint">Scroll to explore</p>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SCREENSHOTS -->
+  <section class="section">
+    <p class="section-label reveal">Screenshots</p>
+    <div class="screens-grid">
+      <div class="screen-card featured reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140828.png" alt="NFC Scan Screen">
+        <div class="screen-label">NFC Scan — Tap to Identify</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140835.png" alt="Members Screen">
+        <div class="screen-label">Members</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140839.png" alt="Inventory Screen">
+        <div class="screen-label">Inventory</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140843.png" alt="Sales Screen">
+        <div class="screen-label">Sales</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140847.png" alt="Analytics Screen">
+        <div class="screen-label">Daily Analytics</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140852.png" alt="Settings Screen">
+        <div class="screen-label">Settings</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 140809.png" alt="User Select Screen">
+        <div class="screen-label">User Selection</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <p class="section-label reveal">Key Features</p>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon">📡</div>
+        <div class="feature-title">NFC Check-in</div>
+        <div class="feature-desc">Members tap their NFC tag to instantly identify themselves. Manual tag ID entry as
+          fallback.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">👥</div>
+        <div class="feature-title">Member Profiles</div>
+        <div class="feature-desc">Track subscriptions, expiry dates, phone numbers, and NFC tag assignments per member.
+        </div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Inventory</div>
+        <div class="feature-desc">Manage supplement stock in grams. Sell, restock, and edit items with per-100g pricing.
+        </div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">POS Sales</div>
+        <div class="feature-desc">Quick sales with configurable price presets. Full sales history with revenue totals in
+          DZD.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Daily Analytics</div>
+        <div class="feature-desc">Per-user daily breakdown of POS transactions, revenue, and NFC check-in counts.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">⚙️</div>
+        <div class="feature-title">Multi-Account</div>
+        <div class="feature-desc">Multiple staff accounts (Admin, badro1) with independent activity tracking.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">GYM <span>MANAGEMENT</span></div>
+    <p class="footer-note">Gym Management System &mdash; ALL RIGHTS RESERVED </p>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script>
+    // Lightbox
+    function openLightbox(card) {
+      const img = card.querySelector('img');
+      document.getElementById('lightbox-img').src = img.src;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(e) {
+      if (!e || e.target !== document.getElementById('lightbox-img')) {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    // Scroll reveal
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+
+</html>
