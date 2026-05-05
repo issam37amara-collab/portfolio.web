@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Barber Manager — Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --gold: #c9a84c;
+      --gold-dim: #8a6e2f;
+      --gold-pale: rgba(201,168,76,0.08);
+      --bg: #f7f5f2;
+      --bg2: #ffffff;
+      --bg3: #f0ede8;
+      --dark: #1a1a1a;
+      --dark2: #2d2b28;
+      --border: #e2ddd6;
+      --muted: #888078;
+      --blue: #3b5bdb;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--dark);
+      font-family: 'DM Sans', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 80px 8vw;
+      gap: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: 'BARBER';
+      position: absolute;
+      right: -2vw;
+      bottom: -6vw;
+      font-family: 'Playfair Display', serif;
+      font-size: 22vw;
+      font-weight: 900;
+      color: rgba(201,168,76,0.06);
+      pointer-events: none;
+      line-height: 1;
+      letter-spacing: -0.03em;
+    }
+
+    .hero-left {
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+      opacity: 0;
+      animation: fadeUp 0.6s ease forwards 0.1s;
+    }
+
+    .hero-eyebrow::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(52px, 7vw, 96px);
+      line-height: 1.0;
+      font-weight: 900;
+      color: var(--dark);
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.2s;
+    }
+
+    .hero-title span {
+      color: var(--gold);
+      display: block;
+    }
+
+    .hero-desc {
+      margin-top: 28px;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.75;
+      font-weight: 300;
+      max-width: 420px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.4s;
+    }
+
+    .hero-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 32px;
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards 0.55s;
+    }
+
+    .tag {
+      border: 1px solid var(--border);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      background: var(--bg2);
+    }
+
+    .tag.gold {
+      border-color: var(--gold-dim);
+      color: var(--gold);
+      background: var(--gold-pale);
+    }
+
+    .hero-right {
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards 0.35s;
+    }
+
+    .hero-mockup {
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.12), 0 0 0 1px var(--border);
+      transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+      transition: transform 0.5s ease;
+    }
+
+    .hero-mockup:hover {
+      transform: perspective(1200px) rotateY(0deg) rotateX(0deg);
+    }
+
+    .hero-mockup img { width: 100%; display: block; }
+
+    /* ── SECTION ── */
+    .section { padding: 90px 8vw; }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 52px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    .section-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── SCREENS ── */
+    .screens-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .screen-card {
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg2);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      position: relative;
+    }
+
+    .screen-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+      border-color: var(--gold-dim);
+    }
+
+    .screen-card.wide {
+      grid-column: span 2;
+    }
+
+    .screen-card img {
+      width: 100%;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+
+    .screen-card:hover img { transform: scale(1.02); }
+
+    .screen-label {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 24px 16px 12px;
+      background: linear-gradient(to top, rgba(255,255,255,0.95) 0%, transparent 100%);
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+    }
+
+    /* ── FEATURES ── */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .feature {
+      background: var(--bg2);
+      padding: 36px 28px;
+      transition: background 0.25s;
+      position: relative;
+    }
+
+    .feature::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(to right, var(--gold), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .feature:hover { background: var(--bg3); }
+    .feature:hover::before { opacity: 1; }
+
+    .feature-icon { font-size: 24px; margin-bottom: 16px; }
+
+    .feature-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    /* ── DIVIDER ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border) 20%, var(--border) 80%, transparent);
+      margin: 0 8vw;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 56px 8vw;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .footer-brand {
+      font-family: 'Playfair Display', serif;
+      font-size: 26px;
+      font-weight: 900;
+    }
+
+    .footer-brand span { color: var(--gold); }
+
+    .footer-note {
+      font-size: 12px;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+
+    /* ── LIGHTBOX ── */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      background: rgba(20,18,15,0.94);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .lightbox.open { opacity: 1; pointer-events: all; }
+
+    .lightbox img {
+      max-width: 88vw;
+      max-height: 86vh;
+      border-radius: 10px;
+      border: 1px solid rgba(201,168,76,0.2);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.7);
+      transform: scale(0.95);
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox.open img { transform: scale(1); }
+
+    .lightbox-close {
+      position: fixed;
+      top: 28px;
+      right: 36px;
+      font-size: 26px;
+      color: rgba(255,255,255,0.5);
+      cursor: pointer;
+      transition: color 0.2s;
+      background: none;
+      border: none;
+      line-height: 1;
+    }
+
+    .lightbox-close:hover { color: var(--gold); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: none; }
+
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero::after { display: none; }
+      .hero-right { display: none; }
+      .screens-grid { grid-template-columns: 1fr 1fr; }
+      .screen-card.wide { grid-column: span 2; }
+      .features { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .screens-grid { grid-template-columns: 1fr; }
+      .screen-card.wide { grid-column: span 1; }
+      .features { grid-template-columns: 1fr; }
+      footer { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-left">
+      <p class="hero-eyebrow">All Rights Reserved by issam</p>
+      <h1 class="hero-title">Barber<span>Manager</span></h1>
+      <p class="hero-desc">
+        A complete barbershop management system — real-time queue handling, per-barber panels, POS payments, service catalog, and revenue analytics. Built for busy shops that need speed and clarity.
+      </p>
+      <div class="hero-tags">
+        <span class="tag gold">Queue Management</span>
+        <span class="tag">Barber Panels</span>
+        <span class="tag">POS</span>
+        <span class="tag">Analytics</span>
+        <span class="tag">Multi-role Users</span>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-mockup">
+        <img src="assets/img/Screenshot 2026-05-03 134714.png" alt="Dashboard">
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SCREENSHOTS -->
+  <section class="section">
+    <div class="section-header reveal">
+      <span class="section-label">Screenshots</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="screens-grid">
+      <div class="screen-card wide reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134714.png" alt="Dashboard">
+        <div class="screen-label">Dashboard & Analytics</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134650.png" alt="Login">
+        <div class="screen-label">Login</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134722.png" alt="Reception">
+        <div class="screen-label">Reception & Queue</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134731.png" alt="Barber Panel">
+        <div class="screen-label">Barber Panel</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134801.png" alt="POS">
+        <div class="screen-label">Point of Sale</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134814.png" alt="Services">
+        <div class="screen-label">Services</div>
+      </div>
+      <div class="screen-card reveal" onclick="openLightbox(this)">
+        <img src="assets/img/Screenshot 2026-05-03 134821.png" alt="Users">
+        <div class="screen-label">User Management</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FEATURES -->
+  <section class="section">
+    <div class="section-header reveal">
+      <span class="section-label">Key Features</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="features">
+      <div class="feature reveal">
+        <div class="feature-icon">🪑</div>
+        <div class="feature-title">Live Queue</div>
+        <div class="feature-desc">Reception adds clients to any barber's queue in real time. Walk-ins or named clients, handled instantly.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">✂️</div>
+        <div class="feature-title">Barber Panel</div>
+        <div class="feature-desc">Each barber gets their own panel to view their current client, select services, and start or finish sessions.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Point of Sale</div>
+        <div class="feature-desc">Pending payments queue with itemized order details. One click to confirm payment and close the order.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Service Catalog</div>
+        <div class="feature-desc">Add, edit, or remove services and prices anytime. Changes reflect across all barber panels immediately.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Revenue Dashboard</div>
+        <div class="feature-desc">Total revenue, clients, and orders with per-barber breakdown and a weekly orders chart — filterable by date range.</div>
+      </div>
+      <div class="feature reveal">
+        <div class="feature-icon">👤</div>
+        <div class="feature-title">Multi-Role Access</div>
+        <div class="feature-desc">Admin, Barber, and Reception roles. Each user sees only what they need — no clutter, no confusion.</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-brand">Barber<span>Manager</span></div>
+    <p class="footer-note">Barbershop Management System &mdash; Portfolio Project</p>
+  </footer>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+    <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+
+  <script>
+    function openLightbox(card) {
+      document.getElementById('lightbox-img').src = card.querySelector('img').src;
+      document.getElementById('lightbox').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(e) {
+      if (!e || e.target !== document.getElementById('lightbox-img')) {
+        document.getElementById('lightbox').classList.remove('open');
+        document.body.style.overflow = '';
+      }
+    }
+
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
+
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08 });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
